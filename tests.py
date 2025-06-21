@@ -34,8 +34,8 @@ class TestDistributedTSPWorker(unittest.TestCase):
         ]
         caminho_inicial = [0, 1]
         result = held_karp_worker(matriz, caminho_inicial)
-        assert result["distancia"] == 80
-        assert result["caminho"] == [0, 1, 3, 2, 0]
+        self.assertEqual(result["distancia"], 80)
+        self.assertEqual(result["caminho"], [0, 1, 3, 2, 0])
 
 
 if __name__ == '__main__':
