@@ -24,11 +24,6 @@ class TestSequentionTSP(unittest.TestCase):
         self.assertEqual(melhor_caminho_sequencial, [0, 2, 5, 9, 6, 8, 3, 7, 4, 1, 0])
 
 
-class TestDistributedTSPMaster(unittest.TestCase):
-    def test_distributed_result(self):
-        return
-
-
 class TestDistributedTSPWorker(unittest.TestCase):
     def test_held_karp_worker(self):
         matriz = [
