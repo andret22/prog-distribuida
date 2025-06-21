@@ -1,6 +1,7 @@
 import unittest
 from sequencial.sequencial import held_karp_sequencial
 from distribuida.worker import held_karp_worker
+from distribuida.distributed import gerar_subproblemas
 
 matriz_distancias = [
     [0.00, 10.77, 12.65, 19.80, 18.68, 20.88, 24.18, 25.61, 25.46, 26.08],
@@ -22,6 +23,14 @@ class TestSequentionTSP(unittest.TestCase):
         menor_distancia_sequencial, melhor_caminho_sequencial = held_karp_sequencial(matriz_distancias)
         self.assertEqual(round(menor_distancia_sequencial, 2), best_distance)
         self.assertEqual(melhor_caminho_sequencial, [0, 2, 5, 9, 6, 8, 3, 7, 4, 1, 0])
+
+
+class TestDistributedTSPMaster(unittest.TestCase):
+    def test_subproblem_generation(self):
+        n_cidades = 4
+        expected = [[0, 1], [0, 2], [0, 3]]
+        result = gerar_subproblemas(n_cidades)
+        assert result == expected
 
 
 class TestDistributedTSPWorker(unittest.TestCase):
