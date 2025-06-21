@@ -19,6 +19,7 @@ def held_karp_worker(matriz, caminho_inicial):
 
     return {"distancia": custo_min, "caminho": melhor_caminho}
 
+
 async def handler(websocket):
     async for message in websocket:
         data = json.loads(message)
@@ -27,9 +28,10 @@ async def handler(websocket):
         resultado = held_karp_worker(matriz, caminho_inicial)
         await websocket.send(json.dumps(resultado))
 
+
 async def main():
     async with websockets.serve(handler, "0.0.0.0", 8765):
-        await asyncio.Future()  # run forever
+        await asyncio.Future()
 
 if __name__ == "__main__":
     asyncio.run(main())
