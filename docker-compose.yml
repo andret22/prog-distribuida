@@ -1,0 +1,30 @@
+version: '3'
+services:
+  master:
+    build: ./distribuida
+    command: python3 distributed.py
+    depends_on:
+      - worker1
+      - worker2
+      - worker3
+      - worker4
+      - worker5
+      - worker6
+  worker1:
+    build: ./distribuida
+    command: python3 worker.py
+  worker2:
+    build: ./distribuida
+    command: python3 worker.py
+  worker3:
+    build: ./distribuida
+    command: python3 worker.py
+  worker4:
+    build: ./distribuida
+    command: python3 worker.py
+  worker5:
+    build: ./distribuida
+    command: python3 worker.py
+  worker6:
+    build: ./distribuida
+    command: python3 worker.py
