@@ -2,6 +2,7 @@ import unittest
 from sequencial.sequencial import held_karp_sequencial
 from distribuida.worker import held_karp_worker
 from distribuida.distributed import gerar_subproblemas
+from paralela.parallel import held_karp_paralelo
 
 matriz_distancias = [
     [0.00, 10.77, 12.65, 19.80, 18.68, 20.88, 24.18, 25.61, 25.46, 26.08],
@@ -47,5 +48,16 @@ class TestDistributedTSPWorker(unittest.TestCase):
         self.assertEqual(result["caminho"], [0, 1, 3, 2, 0])
 
 
+class TestParallelTSP(unittest.TestCase):
+    def test_parallel_result(self):
+        menor_distancia_paralela, melhor_caminho_paralela = held_karp_paralelo()
+        self.assertEqual(round(menor_distancia_paralela, 2), best_distance)
+        self.assertEqual(melhor_caminho_paralela, [0, 2, 5, 9, 6, 8, 3, 7, 4, 1, 0])
+
+
 if __name__ == '__main__':
     unittest.main()
+
+
+
+
