@@ -1,10 +1,10 @@
+import time
 import threading
 import itertools
 import queue
-from typing import List, Tuple
 
 
-distance_matrix = [
+matriz_distancias_paralela = [
     [0.00, 10.77, 12.65, 19.80, 18.68, 20.88, 24.18, 25.61, 25.46, 26.08],
     [10.77, 0.00, 9.43, 10.77, 8.25, 17.46, 19.42, 14.32, 17.20, 24.33],
     [12.65, 9.43, 0.00, 10.77, 15.13, 8.00, 10.63, 20.40, 15.13, 14.42],
@@ -17,60 +17,72 @@ distance_matrix = [
     [26.08, 24.33, 14.42, 13.89, 22.63, 6.32, 10.00, 24.83, 16.12, 0.00],
 ]
 
-NUM_THREADS = 4
+NUM_THREADS = 4  
 
-
-def calcular_distancia(path: List[int]) -> float:
+def calcular_distancia_paralela(caminho):
     distancia = 0
-    for i in range(len(path) - 1):
-        distancia += distance_matrix[path[i]][path[i + 1]]
-    distancia += distance_matrix[path[-1]][path[0]]  
+    for i in range(len(caminho) - 1):
+        distancia += matriz_distancias_paralela[caminho[i]][caminho[i + 1]]
+    distancia += matriz_distancias_paralela[caminho[-1]][caminho[0]]  
     return distancia
 
-
-def tsp_worker(permutations_queue: queue.Queue, result_queue: queue.Queue):
+def worker(par_queue, result_queue):
+    melhor_distancia = float('inf')
     melhor_caminho = []
-    menor_distancia = float("inf")
 
-    while not permutations_queue.empty():
+    while True:
         try:
-            path = permutations_queue.get_nowait()
+            caminho = par_queue.get_nowait()
         except queue.Empty:
             break
-        distancia = calcular_distancia(path)
-        if distancia < menor_distancia:
-            menor_distancia = distancia
-            melhor_caminho = path
 
-    result_queue.put((menor_distancia, melhor_caminho))
+        distancia = calcular_distancia_paralela(caminho)
+        if distancia < melhor_distancia:
+            melhor_distancia = distancia
+            melhor_caminho = caminho
 
+    result_queue.put((melhor_distancia, melhor_caminho))
 
 def held_karp_paralelo():
-    n = len(distance_matrix)
+    n = len(matriz_distancias_paralela)
     cidades = list(range(1, n))  
-    permutations = list(itertools.permutations(cidades))
-    permutations_queue = queue.Queue()
-    result_queue = queue.Queue()
+    permutacoes = list(itertools.permutations(cidades))
+    tarefas = queue.Queue()
+    resultados = queue.Queue()
 
-    
-    for p in permutations:
-        permutations_queue.put([0] + list(p))
+    for p in permutacoes:
+        tarefas.put([0] + list(p))
 
     threads = []
     for _ in range(NUM_THREADS):
-        t = threading.Thread(target=tsp_worker, args=(permutations_queue, result_queue))
+        t = threading.Thread(target=worker, args=(tarefas, resultados))
         t.start()
         threads.append(t)
 
     for t in threads:
         t.join()
 
-    menor_distancia = float("inf")
+    melhor_distancia = float("inf")
     melhor_caminho = []
-    while not result_queue.empty():
-        dist, caminho = result_queue.get()
-        if dist < menor_distancia:
-            menor_distancia = dist
-            melhor_caminho = caminho + [0]
 
-    return menor_distancia, melhor_caminho
+    while not resultados.empty():
+        dist, caminho = resultados.get()
+        if dist < melhor_distancia:
+            melhor_distancia = dist
+            melhor_caminho = caminho
+
+    melhor_caminho.append(0) 
+    return melhor_distancia, melhor_caminho
+
+def executar_held_karp_paralelo():
+    tempo_inicio_paralelo = time.time()
+    menor_distancia_paralela, melhor_caminho_paralela = held_karp_paralelo()
+    tempo_fim_paralelo = time.time()
+
+    print("Resultado - Held-Karp (Paralela)")
+    print(f"Melhor caminho encontrado: {' -> '.join(map(str, melhor_caminho_paralela))}")
+    print(f"Distância total percorrida: {menor_distancia_paralela:.2f}")
+    print(f"Tempo de execução paralela: {tempo_fim_paralelo - tempo_inicio_paralelo:.6f} segundos")
+
+if __name__ == "__main__":
+    executar_held_karp_paralelo()
