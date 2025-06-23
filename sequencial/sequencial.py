@@ -18,13 +18,15 @@ matriz_distancias_sequencial = [
 def held_karp_sequencial(distancias_sequencial):
     quantidade_cidades_sequencial = len(distancias_sequencial)
     custo_minimo_sequencial = {}
-
+    
+# Inicializa os caminhos mínimos do ponto de partida (cidade 0)
     for destino_sequencial in range(1, quantidade_cidades_sequencial):
         custo_minimo_sequencial[(1 << destino_sequencial, destino_sequencial)] = (
             distancias_sequencial[0][destino_sequencial],
             [0, destino_sequencial]
         )
 
+# Calcula o menor caminho entre subconjuntos de cidades progressivamente maiores
     for tamanho_sequencial in range(2, quantidade_cidades_sequencial):
         for subconjunto_sequencial in combinations(range(1, quantidade_cidades_sequencial), tamanho_sequencial):
             bits_sequencial = 0
@@ -44,6 +46,7 @@ def held_karp_sequencial(distancias_sequencial):
 
                 custo_minimo_sequencial[(bits_sequencial, destino_sequencial)] = min(resultados_sequencial)
 
+# Calcula o menor caminho que retorna à cidade inicial
     todos_visitados_sequencial = (2 ** quantidade_cidades_sequencial - 1) - 1
     resultados_finais_sequencial = []
 
@@ -52,6 +55,7 @@ def held_karp_sequencial(distancias_sequencial):
         custo_total_sequencial = custo_final_sequencial + distancias_sequencial[destino_sequencial][0]
         resultados_finais_sequencial.append((custo_total_sequencial, caminho_final_sequencial + [0]))
 
+# Retorna o menor caminho total encontrado
     return min(resultados_finais_sequencial)
 
 def executar_held_karp_sequencial():
@@ -59,9 +63,11 @@ def executar_held_karp_sequencial():
     menor_distancia_sequencial, melhor_caminho_sequencial = held_karp_sequencial(matriz_distancias_sequencial)
     tempo_fim_sequencial = time.time()
 
+# Exibe o resultado final na tela
     print("Resultado - Held-Karp (Sequencial)")
     print(f"Melhor caminho encontrado: {' -> '.join(map(str, melhor_caminho_sequencial))}")
     print(f"Distância total percorrida: {menor_distancia_sequencial:.2f}")
     print(f"Tempo de execução sequencial: {tempo_fim_sequencial - tempo_inicio_sequencial:.6f} segundos")
 
+# Executa o algoritmo e mostra os resultados
 executar_held_karp_sequencial()
