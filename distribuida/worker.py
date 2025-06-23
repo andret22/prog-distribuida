@@ -10,9 +10,11 @@ def held_karp_worker(matriz, caminho_inicial):
     custo_min = float('inf')
     melhor_caminho = []
 
+    # Permutação entre os caminhos possível dentro do subproblema
     for perm in permutations(cidades_restantes):
         caminho = caminho_inicial + list(perm) + [start]
         custo = sum(matriz[caminho[i]][caminho[i+1]] for i in range(len(caminho)-1))
+        # Verificação se o caminha é o melhor
         if custo < custo_min:
             custo_min = custo
             melhor_caminho = caminho
@@ -20,6 +22,7 @@ def held_karp_worker(matriz, caminho_inicial):
     return {"distancia": custo_min, "caminho": melhor_caminho}
 
 
+# Handler de comunicação websocket
 async def handler(websocket):
     async for message in websocket:
         data = json.loads(message)

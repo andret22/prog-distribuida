@@ -3,6 +3,7 @@ import time
 import websockets
 import json
 
+# Matriz com os dados e pesos do "grafo"
 matriz_distancias = [
     [0.00, 10.77, 12.65, 19.80, 18.68, 20.88, 24.18, 25.61, 25.46, 26.08],
     [10.77,  0.00,  9.43, 10.77,  8.25, 17.46, 19.42, 14.32, 17.20, 24.33],
@@ -16,12 +17,13 @@ matriz_distancias = [
     [26.08, 24.33, 14.42, 13.89, 22.63,  6.32, 10.00, 24.83, 16.12,  0.00],
 ]
 
-
+# Função usada para gerar subproblemas para enviar para os workers
 def gerar_subproblemas(n_cidades):
     return [[0, i] for i in range(1, n_cidades)]
 
-
+# Main
 async def main():
+    # Lista de workers e suas respectivas portas
     workers = [
         "ws://worker1:8765",
         "ws://worker2:8765",
@@ -33,8 +35,10 @@ async def main():
     subproblemas = gerar_subproblemas(len(matriz_distancias))
     resultados = []
 
+    # Início do cronômetro
     tempo_inicio = time.time()
 
+    # Enviamos o subproblema para o nó worker
     async def enviar_tarefa(worker_url, tarefa):
         async with websockets.connect(worker_url) as ws:
             await ws.send(json.dumps({
@@ -48,11 +52,15 @@ async def main():
         enviar_tarefa(workers[i % len(workers)], subproblemas[i])
         for i in range(len(subproblemas))
     ]
+
+    # aguardamos a responsta
     resultados = await asyncio.gather(*tasks)
 
     melhor = min(resultados, key=lambda x: x["distancia"])
+    # Fim do cronômetro
     tempo_fim = time.time()
 
+    # Log dos resultados
     print("Resultado - Held-Karp (Distribuída)")
     print(f"Melhor caminho encontrado: {' -> '.join(map(str, melhor['caminho']))}")
     print(f"Distância total percorrida: {melhor['distancia']:.2f}")
