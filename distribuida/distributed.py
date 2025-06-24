@@ -61,7 +61,7 @@ async def main():
     tempo_fim = time.time()
 
     # Log dos resultados
-    print("Resultado - Held-Karp (Distribuída)")
+    print("Resultado - Brute-force (Distribuída)")
     print(f"Melhor caminho encontrado: {' -> '.join(map(str, melhor['caminho']))}")
     print(f"Distância total percorrida: {melhor['distancia']:.2f}")
     print(f"Tempo de execução distribuída: {tempo_fim - tempo_inicio:.6f} segundos")
