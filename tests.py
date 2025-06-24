@@ -1,6 +1,6 @@
 import unittest
 from sequencial.sequencial import brute_force_tsp
-from distribuida.worker import held_karp_worker
+from distribuida.worker import brute_force_worker
 from distribuida.distributed import gerar_subproblemas
 from paralela.parallel import brute_force_paraleleo
 
@@ -35,7 +35,7 @@ class TestDistributedTSPMaster(unittest.TestCase):
 
 
 class TestDistributedTSPWorker(unittest.TestCase):
-    def test_held_karp_worker(self):
+    def test_brute_force_worker(self):
         matriz = [
             [0, 10, 15, 20],
             [10, 0, 35, 25],
@@ -43,7 +43,7 @@ class TestDistributedTSPWorker(unittest.TestCase):
             [20, 25, 30, 0]
         ]
         caminho_inicial = [0, 1]
-        result = held_karp_worker(matriz, caminho_inicial)
+        result = brute_force_worker(matriz, caminho_inicial)
         self.assertEqual(result["distancia"], 80)
         self.assertEqual(result["caminho"], [0, 1, 3, 2, 0])
 
