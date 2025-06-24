@@ -3,7 +3,7 @@ import websockets
 import json
 from itertools import permutations
 
-def held_karp_worker(matriz, caminho_inicial):
+def brute_force_worker(matriz, caminho_inicial):
     n = len(matriz)
     start, next_city = caminho_inicial
     cidades_restantes = [i for i in range(n) if i not in caminho_inicial]
@@ -28,7 +28,7 @@ async def handler(websocket):
         data = json.loads(message)
         matriz = data["matriz"]
         caminho_inicial = data["caminho_inicial"]
-        resultado = held_karp_worker(matriz, caminho_inicial)
+        resultado = brute_force_worker(matriz, caminho_inicial)
         await websocket.send(json.dumps(resultado))
 
 
