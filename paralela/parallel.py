@@ -43,7 +43,7 @@ def worker(par_queue, result_queue):
 
     result_queue.put((melhor_distancia, melhor_caminho))
 
-def held_karp_paralelo():
+def brute_force_paraleleo():
     n = len(matriz_distancias_paralela)
     cidades = list(range(1, n))  
     permutacoes = list(itertools.permutations(cidades))
@@ -74,9 +74,9 @@ def held_karp_paralelo():
     melhor_caminho.append(0) 
     return melhor_distancia, melhor_caminho
 
-def executar_held_karp_paralelo():
+def executar_brute_force_paraleleo():
     tempo_inicio_paralelo = time.time()
-    menor_distancia_paralela, melhor_caminho_paralela = held_karp_paralelo()
+    menor_distancia_paralela, melhor_caminho_paralela = brute_force_paraleleo()
     tempo_fim_paralelo = time.time()
 
     print("Resultado - Held-Karp (Paralela)")
@@ -85,4 +85,4 @@ def executar_held_karp_paralelo():
     print(f"Tempo de execução paralela: {tempo_fim_paralelo - tempo_inicio_paralelo:.6f} segundos")
 
 if __name__ == "__main__":
-    executar_held_karp_paralelo()
+    executar_brute_force_paraleleo()

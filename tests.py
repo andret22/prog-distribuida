@@ -1,8 +1,8 @@
 import unittest
-from sequencial.sequencial import held_karp_sequencial
+from sequencial.sequencial import brute_force_tsp
 from distribuida.worker import held_karp_worker
 from distribuida.distributed import gerar_subproblemas
-from paralela.parallel import held_karp_paralelo
+from paralela.parallel import brute_force_paraleleo
 
 matriz_distancias = [
     [0.00, 10.77, 12.65, 19.80, 18.68, 20.88, 24.18, 25.61, 25.46, 26.08],
@@ -21,7 +21,7 @@ best_distance = 87.12
 
 class TestSequentionTSP(unittest.TestCase):
     def test_sequential_result(self):
-        menor_distancia_sequencial, melhor_caminho_sequencial = held_karp_sequencial(matriz_distancias)
+        menor_distancia_sequencial, melhor_caminho_sequencial = brute_force_tsp(matriz_distancias)
         self.assertEqual(round(menor_distancia_sequencial, 2), best_distance)
         self.assertEqual(melhor_caminho_sequencial, [0, 2, 5, 9, 6, 8, 3, 7, 4, 1, 0])
 
@@ -50,14 +50,11 @@ class TestDistributedTSPWorker(unittest.TestCase):
 
 class TestParallelTSP(unittest.TestCase):
     def test_parallel_result(self):
-        menor_distancia_paralela, melhor_caminho_paralela = held_karp_paralelo()
+        menor_distancia_paralela, melhor_caminho_paralela = brute_force_paraleleo()
         self.assertEqual(round(menor_distancia_paralela, 2), best_distance)
         self.assertEqual(melhor_caminho_paralela, [0, 2, 5, 9, 6, 8, 3, 7, 4, 1, 0])
 
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
 
