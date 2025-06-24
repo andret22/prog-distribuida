@@ -1,5 +1,5 @@
 import time
-from itertools import combinations
+from itertools import permutations
 
 # Matriz de distâncias entre as cidades
 matriz_distancias_sequencial = [
@@ -15,59 +15,32 @@ matriz_distancias_sequencial = [
     [26.08, 24.33, 14.42, 13.89, 22.63,  6.32, 10.00, 24.83, 16.12,  0.00],
 ]
 
-def held_karp_sequencial(distancias_sequencial):
-    quantidade_cidades_sequencial = len(distancias_sequencial)
-    custo_minimo_sequencial = {}
-    
-# Inicializa os caminhos mínimos do ponto de partida (cidade 0)
-    for destino_sequencial in range(1, quantidade_cidades_sequencial):
-        custo_minimo_sequencial[(1 << destino_sequencial, destino_sequencial)] = (
-            distancias_sequencial[0][destino_sequencial],
-            [0, destino_sequencial]
-        )
+def brute_force_tsp(distancias):
+    n = len(distancias)
+    cidades = list(range(1, n))
+    menor_distancia = float('inf')
+    melhor_caminho = []
 
-# Calcula o menor caminho entre subconjuntos de cidades progressivamente maiores
-    for tamanho_sequencial in range(2, quantidade_cidades_sequencial):
-        for subconjunto_sequencial in combinations(range(1, quantidade_cidades_sequencial), tamanho_sequencial):
-            bits_sequencial = 0
-            for cidade_sequencial in subconjunto_sequencial:
-                bits_sequencial |= 1 << cidade_sequencial
+    for perm in permutations(cidades):
+        caminho = [0] + list(perm) + [0]
+        distancia = 0
+        for i in range(n):
+            distancia += distancias[caminho[i]][caminho[i+1]]
+        if distancia < menor_distancia:
+            menor_distancia = distancia
+            melhor_caminho = caminho
 
-            for destino_sequencial in subconjunto_sequencial:
-                bits_anteriores_sequencial = bits_sequencial & ~(1 << destino_sequencial)
-                resultados_sequencial = []
+    return menor_distancia, melhor_caminho
 
-                for intermedia_sequencial in subconjunto_sequencial:
-                    if intermedia_sequencial == destino_sequencial:
-                        continue
-                    custo_anterior_sequencial, caminho_anterior_sequencial = custo_minimo_sequencial[(bits_anteriores_sequencial, intermedia_sequencial)]
-                    novo_custo_sequencial = custo_anterior_sequencial + distancias_sequencial[intermedia_sequencial][destino_sequencial]
-                    resultados_sequencial.append((novo_custo_sequencial, caminho_anterior_sequencial + [destino_sequencial]))
+def executar_brute_force_tsp():
+    tempo_inicio = time.time()
+    menor_distancia, melhor_caminho = brute_force_tsp(matriz_distancias_sequencial)
+    tempo_fim = time.time()
 
-                custo_minimo_sequencial[(bits_sequencial, destino_sequencial)] = min(resultados_sequencial)
-
-# Calcula o menor caminho que retorna à cidade inicial
-    todos_visitados_sequencial = (2 ** quantidade_cidades_sequencial - 1) - 1
-    resultados_finais_sequencial = []
-
-    for destino_sequencial in range(1, quantidade_cidades_sequencial):
-        custo_final_sequencial, caminho_final_sequencial = custo_minimo_sequencial[(todos_visitados_sequencial, destino_sequencial)]
-        custo_total_sequencial = custo_final_sequencial + distancias_sequencial[destino_sequencial][0]
-        resultados_finais_sequencial.append((custo_total_sequencial, caminho_final_sequencial + [0]))
-
-# Retorna o menor caminho total encontrado
-    return min(resultados_finais_sequencial)
-
-def executar_held_karp_sequencial():
-    tempo_inicio_sequencial = time.time()
-    menor_distancia_sequencial, melhor_caminho_sequencial = held_karp_sequencial(matriz_distancias_sequencial)
-    tempo_fim_sequencial = time.time()
-
-# Exibe o resultado final na tela
-    print("Resultado - Held-Karp (Sequencial)")
-    print(f"Melhor caminho encontrado: {' -> '.join(map(str, melhor_caminho_sequencial))}")
-    print(f"Distância total percorrida: {menor_distancia_sequencial:.2f}")
-    print(f"Tempo de execução sequencial: {tempo_fim_sequencial - tempo_inicio_sequencial:.6f} segundos")
+    print("Resultado - TSP (Brute Force)")
+    print(f"Melhor caminho encontrado: {' -> '.join(map(str, melhor_caminho))}")
+    print(f"Distância total percorrida: {menor_distancia:.2f}")
+    print(f"Tempo de execução brute force: {tempo_fim - tempo_inicio:.6f} segundos")
 
 # Executa o algoritmo e mostra os resultados
-executar_held_karp_sequencial()
+executar_brute_force_tsp()
